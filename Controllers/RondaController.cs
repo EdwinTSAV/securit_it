@@ -48,6 +48,7 @@ namespace ApiBackend.Controllers
             var rol = GetUserRole();
 
             var ronda = _context.Rondas
+                .Include(r => r.RondaEstado)
                 .Include(r => r.Supervisor)
                 .Include(r => r.RondaPuestos)
                     .ThenInclude(rp => rp.Puesto)
@@ -76,7 +77,17 @@ namespace ApiBackend.Controllers
                 Estado = rp.RondaPuestoEstado.Nombre
             });
 
-            return Ok(result);
+            RondaDto rondaDto = new RondaDto
+            {
+                Id = ronda.RondaId,
+                FechaInicio = ronda.FechaInicio,
+                FechaFin = ronda.FechaFin,
+                Nombre = ronda.Nombre,
+                Estado = ronda.RondaEstado.Nombre,
+                RondaPuestos = result
+            };
+
+            return Ok(rondaDto);
         }
 
         // POST: RondaController/Create
